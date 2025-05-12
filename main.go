@@ -9,6 +9,8 @@ import (
 
 func main() {
 
+	//TOASK tenemos que hacer otro programa para interactuar con este programa
+	//	como si este estuviera desplegado en otro lado o hacemos to do junto
 	saleService := Sales.NewSaleService(Sales.NewSaleStorage())
 	userService := users.NewUserService(users.NewLocalStorage())
 
@@ -29,6 +31,8 @@ func main() {
 		}
 
 		switch opcion {
+		//TOIMPLEMENT poner todas las opciones que el sistema tiene que manejar
+		//	si es que se hacen en este sistema y no en otro
 		case 1:
 			utils.InitSystem(saleService, userService)
 			fmt.Println("Sistema precargado exitosamente!")

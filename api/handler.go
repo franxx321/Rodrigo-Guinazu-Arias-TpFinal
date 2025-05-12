@@ -64,6 +64,7 @@ func (h *userHandler) HandleUserUpdate(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	//FIXME hay que modificar esto en base a la modificacion que hizo el joako en el userService
 	u, err := h.userService.Update(id, fields)
 	if err != nil {
 		if errors.Is(err, users.ErrNotFound) {
