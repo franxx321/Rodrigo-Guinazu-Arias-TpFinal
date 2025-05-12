@@ -21,7 +21,7 @@ func (s *UserService) Create(user *User) error {
 	user.CreatedAt = now
 	user.UpdatedAt = now
 	user.Version = 1
-
+	s.userStorage.Set(user)
 	return nil
 }
 

@@ -24,7 +24,6 @@ func (l *LocalStorage) Set(user *User) error {
 	if user.ID == "" {
 		return ErrEmptyID
 	}
-
 	l.m[user.ID] = user
 	return nil
 }

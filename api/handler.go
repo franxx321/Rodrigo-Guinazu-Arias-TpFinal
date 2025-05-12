@@ -1,17 +1,22 @@
 package api
 
 import (
+	"Rodrigo-Guinazu-Arias-TpFinal/models/Sales"
 	"Rodrigo-Guinazu-Arias-TpFinal/models/users"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type handler struct {
+type userHandler struct {
 	userService *users.UserService
 }
 
-func (h *handler) handleCreate(ctx *gin.Context) {
+type SaleHandler struct {
+	saleService *Sales.SaleService
+}
+
+func (h *userHandler) HandleUserCreate(ctx *gin.Context) {
 	var req struct {
 		Name     string `json:"name"`
 		Address  string `json:"address"`
@@ -37,7 +42,7 @@ func (h *handler) handleCreate(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, u)
 }
 
-func (h *handler) handleUserRead(ctx *gin.Context) {
+func (h *userHandler) HandleUserRead(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	u, err := h.userService.Get(id)
@@ -52,7 +57,7 @@ func (h *handler) handleUserRead(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
-func (h *handler) handleUpdate(ctx *gin.Context) {
+func (h *userHandler) HandleUserUpdate(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var fields *users.UpdateFields
 	if err := ctx.ShouldBindJSON(&fields); err != nil {
@@ -71,11 +76,11 @@ func (h *handler) handleUpdate(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
-func (h *handler) handleDelete(ctx *gin.Context) {
+func (h *userHandler) HandleUserDelete(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if err := h.userService.Delete(id); err != nil {
-		if errors.Is(err, user.ErrNotFound) {
+		if errors.Is(err, users.ErrNotFound) {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
@@ -85,4 +90,94 @@ func (h *handler) handleDelete(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusNoContent)
+}
+
+func (h *SaleHandler) HandleSaleCreate(ctx *gin.Context) {
+	var req struct {
+		UserId string  `json:"user_id"`
+		Amount float32 `json:"amount"`
+	}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	sale, err := h.saleService.Create(req.UserId, req.Amount)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	} else {
+		ctx.JSON(http.StatusCreated, sale)
+	}
+	return
+}
+
+func (h *SaleHandler) HandleSaleUpdate(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var req struct {
+		Status string `json:"status"`
+	}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := h.saleService.Update(id, req.Status)
+	if err != nil {
+		if errors.Is(err, Sales.ErrNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		if errors.Is(err, Sales.ErrSaleNotPending) || errors.Is(err, Sales.ErrInvalidTransition) {
+			ctx.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+		if errors.Is(err, Sales.ErrInvalidStatus) {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"message": "Sale updated"})
+	}
+	return
+}
+
+func (h *SaleHandler) HandleSaleGetByUserStatus(ctx *gin.Context) {
+	userId := ctx.Param("user_id")
+	status := ctx.Query("status")
+
+	sales, err := h.saleService.GetByUserStatus(userId, status)
+	if err != nil {
+		if errors.Is(err, Sales.ErrInvalidStatus) {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	var quantity int
+	var aproved int
+	var rejected int
+	var pending int
+	var totalAmount float32
+	for _, sale := range *sales {
+		quantity++
+		if sale.Status == Sales.Aproved {
+			aproved++
+		} else if sale.Status == Sales.Rejected {
+			rejected++
+		} else if sale.Status == Sales.Pending {
+			pending++
+		}
+		totalAmount += sale.Amount
+	}
+	var response struct {
+		Metadata struct {
+			Quantity    int     `json:"quantity"`
+			Aproved     int     `json:"aproved"`
+			Rejected    int     `json:"rejected"`
+			Pending     int     `json:"pending"`
+			TotalAmount float32 `json:"total_amount"`
+		} `json:"metadata"`
+		Sales []Sales.Sale `json:"results"`
+	}
+	ctx.JSON(http.StatusOK, response)
 }

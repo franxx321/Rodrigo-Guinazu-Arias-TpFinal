@@ -1,6 +1,9 @@
-package sales
+package Sales
 
 import "errors"
+
+var ErrNotFound = errors.New("sale not found")
+var ErrEmptyID = errors.New("empty sale ID")
 
 type SaleStorage struct {
 	m map[string]*Sale
@@ -15,14 +18,14 @@ func NewSaleStorage() *SaleStorage {
 func (st *SaleStorage) GetSale(saleID string) (*Sale, error) {
 	sale, ok := st.m[saleID]
 	if !ok {
-		return nil, errors.New("Sale not found")
+		return nil, ErrNotFound
 	}
 	return sale, nil
 }
 
 func (st *SaleStorage) PutSale(sale *Sale) error {
 	if sale.Id == "" {
-		errors.New("Sale ID is empty")
+		return ErrEmptyID
 	}
 	st.m[sale.Id] = sale
 	return nil
@@ -42,9 +45,6 @@ func (st *SaleStorage) GetByUserStatus(userId string, status string) (*[]Sale, e
 				sales = append(sales, *sale)
 			}
 		}
-	}
-	if len(sales) == 0 {
-		return nil, errors.New("No sales found")
 	}
 	return &sales, nil
 }

@@ -1,10 +1,10 @@
-package sales
+package Sales
 
 import "time"
 
-var pending string = "pending"
-var aproved string = "aproved"
-var rejected string = "rejected"
+var Pending string = "Pending"
+var Aproved string = "Aproved"
+var Rejected string = "Rejected"
 
 type Sale struct {
 	Id        string    `json:"id"`
