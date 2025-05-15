@@ -57,7 +57,7 @@ func (h *userHandler) HandleUserRead(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
-func (h *userHandler) HandleUserUpdate(ctx *gin.Context) {
+/*func (h *userHandler) HandleUserUpdate(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var fields *users.UpdateFields
 	if err := ctx.ShouldBindJSON(&fields); err != nil {
@@ -75,7 +75,7 @@ func (h *userHandler) HandleUserUpdate(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, u)
-}
+}*/
 
 func (h *userHandler) HandleUserDelete(ctx *gin.Context) {
 	id := ctx.Param("id")

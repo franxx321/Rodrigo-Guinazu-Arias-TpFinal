@@ -44,6 +44,11 @@ func InitSystem(saleService *Sales.SaleService, userService *users.UserService) 
 	fmt.Println("\nSales created:")
 	fmt.Println("-------------")
 
+	fmt.Printf("User: %s, Address: %s, Nickname: %s, UserID: %s\n", user1.Name, user1.Address, user1.NickName, user1.ID)
+
+	fmt.Printf("User: %s, Address: %s, Nickname: %s, UserID: %s\n", user2.Name, user2.Address, user2.NickName, user2.ID)
+
+	fmt.Printf("User: %s, Address: %s, Nickname: %s, UserID: %s\n", user3.Name, user3.Address, user3.NickName, user3.ID)
 	// For user1
 	sale1, err := saleService.Create(user1.ID, 100.50)
 	if err != nil {

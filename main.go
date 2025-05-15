@@ -5,6 +5,7 @@ import (
 	"Rodrigo-Guinazu-Arias-TpFinal/models/users"
 	"Rodrigo-Guinazu-Arias-TpFinal/utils"
 	"fmt"
+	"resty.dev/v3"
 )
 
 func main() {
@@ -37,9 +38,36 @@ func main() {
 			utils.InitSystem(saleService, userService)
 			fmt.Println("Sistema precargado exitosamente!")
 		case 2:
-
+			fmt.Println("Ingrese el id del usuario: ")
+			var id string
+			fmt.Scanf("%s", &id)
+			fmt.Println("Ingrese el monto de la venta: ")
+			var monto float32
+			fmt.Scanf("%f", &monto)
+			var request struct {
+				UserId string  `json:"userId"`
+				Amount float32 `json:"amount"`
+			}
+			request.Amount = monto
+			request.UserId = id
+			req := resty.New()
+			req.R().
+				SetBody(request).Post("http://localhost:1234/sales")
 		case 3:
-
+			fmt.Println("Ingrese el id de la venta: ")
+			var id string
+			fmt.Scanf("%s", &id)
+			fmt.Println("Ingrese el nuevo estado de la venta: ")
+			var estado string
+			fmt.Scanf("%s", &estado)
+			var request struct {
+				Status string `json:"status"`
+			}
+			req := resty.New()
+			request.Status = estado
+			req.R().SetQueryParam("id", id).
+				SetBody(request).
+				Patch("http://localhost:1234/sales")
 		case 4:
 
 		case 5:
