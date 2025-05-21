@@ -75,7 +75,7 @@ func (h *UserHandler) HandleUserUpdate(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, u)
-}*/
+}
 
 func (h *UserHandler) HandleUserDelete(ctx *gin.Context) {
 	id := ctx.Param("id")
