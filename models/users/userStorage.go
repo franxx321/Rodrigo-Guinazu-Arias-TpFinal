@@ -14,7 +14,7 @@ type LocalStorage struct {
 	m map[string]*User
 }
 
-func NewLocalStorage() *LocalStorage {
+func NewUserStorage() *LocalStorage {
 	return &LocalStorage{
 		m: map[string]*User{},
 	}

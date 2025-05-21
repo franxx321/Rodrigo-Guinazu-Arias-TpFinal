@@ -2,6 +2,7 @@ package Sales
 
 import (
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"math/rand/v2"
 	"time"
@@ -24,6 +25,7 @@ func NewSaleService(saleStorage *SaleStorage) *SaleService {
 func (s *SaleService) Create(userId string, amount float32) (*Sale, error) {
 	//TODO: chequear que el usuario existe(falta que el joako termine el user Service)
 	var status string
+	fmt.Printf("holaa")
 	rand := rand.IntN(3)
 	if rand == 0 {
 		status = Pending

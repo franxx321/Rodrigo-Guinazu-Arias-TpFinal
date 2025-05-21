@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-type userHandler struct {
+type UserHandler struct {
 	userService *users.UserService
 }
 
@@ -16,7 +16,7 @@ type SaleHandler struct {
 	saleService *Sales.SaleService
 }
 
-func (h *userHandler) HandleUserCreate(ctx *gin.Context) {
+func (h *UserHandler) HandleUserCreate(ctx *gin.Context) {
 	var req struct {
 		Name     string `json:"name"`
 		Address  string `json:"address"`
@@ -42,7 +42,7 @@ func (h *userHandler) HandleUserCreate(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, u)
 }
 
-func (h *userHandler) HandleUserRead(ctx *gin.Context) {
+func (h *UserHandler) HandleUserRead(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	u, err := h.userService.Get(id)
@@ -57,7 +57,7 @@ func (h *userHandler) HandleUserRead(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
-/*func (h *userHandler) HandleUserUpdate(ctx *gin.Context) {
+func (h *UserHandler) HandleUserUpdate(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var fields *users.UpdateFields
 	if err := ctx.ShouldBindJSON(&fields); err != nil {
@@ -77,7 +77,7 @@ func (h *userHandler) HandleUserRead(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }*/
 
-func (h *userHandler) HandleUserDelete(ctx *gin.Context) {
+func (h *UserHandler) HandleUserDelete(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	if err := h.userService.Delete(id); err != nil {
