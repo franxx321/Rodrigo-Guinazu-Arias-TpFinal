@@ -142,7 +142,7 @@ func (h *SaleHandler) HandleSaleUpdate(ctx *gin.Context) {
 }
 
 func (h *SaleHandler) HandleSaleGetByUserStatus(ctx *gin.Context) {
-	userId := ctx.Param("user_id")
+	userId := ctx.Query("user_id")
 	status := ctx.Query("status")
 
 	sales, err := h.saleService.GetByUserStatus(userId, status)
@@ -180,5 +180,16 @@ func (h *SaleHandler) HandleSaleGetByUserStatus(ctx *gin.Context) {
 		} `json:"metadata"`
 		Sales []Sales.Sale `json:"results"`
 	}
+
+	// Populate metadata
+	response.Metadata.Quantity = quantity
+	response.Metadata.Aproved = aproved
+	response.Metadata.Rejected = rejected
+	response.Metadata.Pending = pending
+	response.Metadata.TotalAmount = totalAmount
+
+	// Populate sales
+	response.Sales = *sales
+
 	ctx.JSON(http.StatusOK, response)
 }

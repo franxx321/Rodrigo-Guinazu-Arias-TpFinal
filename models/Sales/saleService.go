@@ -1,10 +1,12 @@
 package Sales
 
 import (
+	"Rodrigo-Guinazu-Arias-TpFinal/models/users"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"math/rand/v2"
+	"resty.dev/v3"
 	"time"
 )
 
@@ -23,7 +25,12 @@ func NewSaleService(saleStorage *SaleStorage) *SaleService {
 }
 
 func (s *SaleService) Create(userId string, amount float32) (*Sale, error) {
-	//TODO: chequear que el usuario existe(falta que el joako termine el user Service)
+	user := &users.User{}
+	req := resty.New()
+	res, _ := req.R().SetResult(user).Get("http://localhost:1234/users/" + userId)
+	if res.StatusCode() == 404 {
+		return nil, users.ErrNotFound
+	}
 	var status string
 	fmt.Printf("holaa")
 	rand := rand.IntN(3)
