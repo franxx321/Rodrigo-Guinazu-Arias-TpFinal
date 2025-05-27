@@ -23,7 +23,7 @@ type UserResponse struct {
 	Version   int       `json:"version"`
 }
 
-func main() {
+func main2() {
 	client := resty.New()
 	client.SetBaseURL("http://localhost:1234")
 	scanner := bufio.NewScanner(os.Stdin)

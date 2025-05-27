@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"math/rand/v2"
+	"os"
 	"resty.dev/v3"
 	"time"
 )
@@ -27,7 +28,12 @@ func NewSaleService(saleStorage *SaleStorage) *SaleService {
 func (s *SaleService) Create(userId string, amount float32) (*Sale, error) {
 	user := &users.User{}
 	req := resty.New()
-	res, _ := req.R().SetResult(user).Get("http://localhost:1234/users/" + userId)
+	//res, _ := req.R().SetResult(user).Get("http://localhost:1234/users/" + userId)
+	url := os.Getenv("USER_SERVICE_URL")
+	if url == "" {
+		url = "http://localhost:1234"
+	}
+	res, _ := req.R().SetResult(user).Get(fmt.Sprintf("%s/users/%s", url, userId))
 	if res.StatusCode() == 404 {
 		return nil, users.ErrNotFound
 	}
